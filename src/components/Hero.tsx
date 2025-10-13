@@ -43,7 +43,7 @@ export const Hero = () => {
   const socialLinks = [
     {
       icon: Linkedin,
-      href: "https://www.linkedin.com/in/kalyan-sadhukhan/",
+      href: "https://www.linkedin.com/in/kalyan-sadhukhan",
       label: "LinkedIn Profile",
     },
     {
@@ -53,7 +53,7 @@ export const Hero = () => {
     },
     {
       icon: Instagram,
-      href: "https://instagram.com/your-handle",
+      href: "https://www.instagram.com/swag_vampi/",
       label: "Instagram Profile",
     },
   ];
