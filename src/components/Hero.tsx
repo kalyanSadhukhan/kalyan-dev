@@ -154,31 +154,41 @@ export const Hero = () => {
               onMouseLeave={() => setMousePosition({ x: 0, y: 0 })}
             >
               <div
-                className="glass-card p-6 rounded-3xl transition-transform duration-500 ease-out animate-float"
+                className="glass-card p-6 rounded-3xl transition-all duration-700 ease-out animate-float group-hover:scale-105"
                 style={{
-                  transform: `perspective(1000px) rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg)`,
+                  transform: `perspective(1200px) rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg) scale(${mousePosition.x || mousePosition.y ? 1.02 : 1})`,
                 }}
               >
-                <div className="relative">
-                  {/* Glow effect behind image */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-2xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500" />
+                <div className="relative overflow-hidden rounded-2xl">
+                  {/* Animated gradient glow behind image */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-primary rounded-2xl blur-2xl opacity-30 group-hover:opacity-60 transition-all duration-700 animate-glow-pulse" />
+                  
+                  {/* Shimmer effect overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                   
                   {/* Portrait image */}
                   <img
                     src={portraitImage}
                     alt="Kalyan Sadhukhan - Web Developer"
-                    className="relative rounded-2xl w-full max-w-md shadow-2xl"
+                    className="relative rounded-2xl w-full max-w-md shadow-2xl transform group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="eager"
                   />
                   
-                  {/* Vignette overlay */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  {/* Vignette overlay with enhanced blend */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-background/90 via-background/20 to-transparent group-hover:from-background/70 transition-all duration-500" />
+                  
+                  {/* Accent border on hover */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-primary/0 group-hover:border-primary/30 transition-all duration-500" />
                 </div>
               </div>
 
-              {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-3xl animate-glow-pulse" />
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/20 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: "1s" }} />
+              {/* Animated decorative light orbs */}
+              <div className="absolute -top-6 -right-6 w-28 h-28 bg-primary/30 rounded-full blur-3xl animate-glow-pulse group-hover:bg-primary/50 transition-all duration-500" />
+              <div className="absolute -bottom-6 -left-6 w-36 h-36 bg-accent/30 rounded-full blur-3xl animate-glow-pulse group-hover:bg-accent/50 transition-all duration-500" style={{ animationDelay: "1s" }} />
+              
+              {/* Floating accent rings */}
+              <div className="absolute top-1/4 -left-8 w-20 h-20 border-2 border-primary/20 rounded-full animate-float group-hover:border-primary/40 transition-colors duration-500" style={{ animationDelay: "0.5s", animationDuration: "4s" }} />
+              <div className="absolute bottom-1/4 -right-8 w-16 h-16 border-2 border-accent/20 rounded-full animate-float group-hover:border-accent/40 transition-colors duration-500" style={{ animationDelay: "1.5s", animationDuration: "5s" }} />
             </div>
           </div>
         </div>
