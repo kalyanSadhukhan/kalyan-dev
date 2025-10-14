@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, GraduationCap, Award, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import ResumePDF from "@/assets/Kalyan_Sadhukhan_Resume.pdf";
 
 export const Resume = () => {
   const education = [
@@ -66,13 +67,7 @@ export const Resume = () => {
             <Button
   size="lg"
   className="bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all duration-300 hover:scale-105"
-  onClick={() =>
-    window.open(
-      "https://raw.githubusercontent.com/KalyanSadhukhan2121/PortfolioAssets/main/Kalyan_Sadhukhan_Resume%20(2).pdf",
-      "_blank",
-      "noopener,noreferrer"
-    )
-  }
+  onClick={() => window.open(ResumePDF, "_blank", "noopener,noreferrer")}
 >
   <ExternalLink className="mr-2 h-5 w-5" />
   Open PDF
