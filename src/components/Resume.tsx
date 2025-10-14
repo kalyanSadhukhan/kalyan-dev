@@ -64,13 +64,19 @@ export const Resume = () => {
           <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mb-6" />
           <div className="flex flex-wrap justify-center gap-4">
             <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all duration-300 hover:scale-105"
-              onClick={() => window.open("https://raw.githubusercontent.com/kalyanSadhukhan/assets/main/Kalyan_Sadhukhan_Resume%20(2).pdf", "_blank")}
-            >
-              <ExternalLink className="mr-2 h-5 w-5" />
-              Open PDF
-            </Button>
+  size="lg"
+  className="bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all duration-300 hover:scale-105"
+  onClick={() =>
+    window.open(
+      "https://raw.githubusercontent.com/KalyanSadhukhan2121/PortfolioAssets/main/Kalyan_Sadhukhan_Resume%20(2).pdf",
+      "_blank",
+      "noopener,noreferrer"
+    )
+  }
+>
+  <ExternalLink className="mr-2 h-5 w-5" />
+  Open PDF
+</Button>
             <Button
               size="lg"
               variant="outline"
