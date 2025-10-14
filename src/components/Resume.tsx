@@ -66,7 +66,7 @@ export const Resume = () => {
             <Button
               size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all duration-300 hover:scale-105"
-              onClick={() => window.open("/Kalyan_Sadhukhan_Resume.pdf", "_blank")}
+              onClick={() => window.open("https://raw.githubusercontent.com/kalyanSadhukhan/assets/main/Kalyan_Sadhukhan_Resume%20(2).pdf", "_blank")}
             >
               <ExternalLink className="mr-2 h-5 w-5" />
               Open PDF
