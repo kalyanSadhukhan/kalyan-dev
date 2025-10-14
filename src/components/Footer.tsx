@@ -1,4 +1,5 @@
 import { Github, Linkedin, Instagram, Heart } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,6 +14,11 @@ export const Footer = () => {
       icon: Github,
       href: "https://github.com/kalyanSadhukhan",
       label: "GitHub",
+    },
+    {
+      icon: FaXTwitter,
+      href: "https://x.com/KalyanSadhukh14",
+      label: "Twitter",
     },
     {
       icon: Instagram,
@@ -96,14 +102,6 @@ export const Footer = () => {
                   className="hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
                 >
                   sadhukhankalyan21@gmail.com
-                </a>
-              </p>
-              <p className="text-sm">
-                <a
-                  href="tel:+918017771992"
-                  className="hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
-                >
-                  +91-8017771992
                 </a>
               </p>
             </div>

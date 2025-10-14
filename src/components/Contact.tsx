@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, Send } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export const Contact = () => {
@@ -105,28 +105,6 @@ export const Contact = () => {
                       className="text-muted-foreground hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
                     >
                       sadhukhankalyan21@gmail.com
-                    </a>
-                    <br />
-                    <a
-                      href="mailto:skalyanBTECH23@ced.alliance.edu.in"
-                      className="text-muted-foreground hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md text-sm"
-                    >
-                      skalyanBTECH23@ced.alliance.edu.in
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="h-6 w-6 text-accent" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">Phone</h4>
-                    <a
-                      href="tel:+918017771992"
-                      className="text-muted-foreground hover:text-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-accent rounded-md"
-                    >
-                      +91-8017771992
                     </a>
                   </div>
                 </div>

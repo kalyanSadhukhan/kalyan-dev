@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Github, Linkedin, Instagram, Download, Mail } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 import portraitImage from "@/assets/portrait.png";
 
 const roles = ["a student", "Web Developer"];
@@ -50,6 +51,11 @@ export const Hero = () => {
       icon: Github,
       href: "https://github.com/kalyanSadhukhan",
       label: "GitHub Profile",
+    },
+    {
+      icon: FaXTwitter,
+      href: "https://x.com/KalyanSadhukh14",
+      label: "Twitter Profile",
     },
     {
       icon: Instagram,

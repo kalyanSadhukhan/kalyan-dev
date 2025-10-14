@@ -6,19 +6,41 @@ export const Skills = () => {
     {
       icon: Code,
       title: "Programming Languages",
-      skills: ["Java", "C", "C++", "Python", "SQL", "HTML", "CSS"],
+      skills: [
+        { name: "Java", url: "https://www.geeksforgeeks.org/java/" },
+        { name: "C", url: "https://www.geeksforgeeks.org/c-programming-language/" },
+        { name: "C++", url: "https://www.geeksforgeeks.org/c-plus-plus/" },
+        { name: "Python", url: "https://www.geeksforgeeks.org/python-programming-language/" },
+        { name: "SQL", url: "https://www.geeksforgeeks.org/sql-tutorial/" },
+        { name: "HTML", url: "https://www.geeksforgeeks.org/html-tutorials/" },
+        { name: "CSS", url: "https://www.geeksforgeeks.org/css-tutorials/" },
+        { name: "JavaScript", url: "https://www.geeksforgeeks.org/javascript/" },
+      ],
       color: "primary",
     },
     {
       icon: Wrench,
       title: "Tools & Platforms",
-      skills: ["GitHub", "VS Code", "IntelliJ IDEA"],
+      skills: [
+        { name: "GitHub", url: "https://www.geeksforgeeks.org/what-is-github-and-how-to-use-it/" },
+        { name: "VS Code", url: "https://www.geeksforgeeks.org/visual-studio-code-tutorials/" },
+        { name: "IntelliJ IDEA", url: "https://www.geeksforgeeks.org/intellij-idea-tutorial/" },
+        { name: "Lovable", url: "https://www.lovable.so/" },
+        { name: "n8n", url: "https://n8n.io/" },
+      ],
       color: "accent",
     },
     {
       icon: BookOpen,
       title: "Core Concepts",
-      skills: ["OOP", "Data Structures & Algorithms", "AI/ML", "DBMS", "Operating Systems"],
+      skills: [
+        { name: "OOP", url: "https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/" },
+        { name: "DBMS", url: "https://www.geeksforgeeks.org/dbms/" },
+        { name: "DSA", url: "https://www.geeksforgeeks.org/data-structures/" },
+        { name: "AI/ML", url: "https://www.geeksforgeeks.org/machine-learning/" },
+        { name: "OS", url: "https://www.geeksforgeeks.org/operating-systems/" },
+        { name: "Web Development", url: "https://www.geeksforgeeks.org/web-development/" },
+      ],
       color: "primary",
     },
   ];
@@ -32,7 +54,7 @@ export const Skills = () => {
       "Menu-driven console interface for seamless user interaction",
       "Centralized configuration for easy deployment",
     ],
-    githubLink: "#", // Placeholder for GitHub link
+    githubLink: "https://github.com/kalyanSadhukhan/Hotel-Reservation-System",
   };
 
   return (
@@ -78,13 +100,20 @@ export const Skills = () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 {category.skills.map((skill) => (
-                  <Badge
-                    key={skill}
-                    variant="secondary"
-                    className="bg-muted/50 hover:bg-primary/10 hover:text-primary transition-colors duration-300 cursor-default"
+                  <a
+                    key={skill.name}
+                    href={skill.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
                   >
-                    {skill}
-                  </Badge>
+                    <Badge
+                      variant="secondary"
+                      className="bg-muted/50 hover:bg-primary/10 hover:text-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                    >
+                      {skill.name}
+                    </Badge>
+                  </a>
                 ))}
               </div>
             </div>
@@ -121,6 +150,8 @@ export const Skills = () => {
 
             <a
               href={highlightedProject.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-primary hover:text-accent transition-colors duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-primary rounded-md px-2"
             >
               View on GitHub
