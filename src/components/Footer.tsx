@@ -111,7 +111,7 @@ export const Footer = () => {
         {/* Bottom section */}
         <div className="pt-8 border-t border-border/50 text-center">
           <p className="text-muted-foreground flex items-center justify-center gap-1 flex-wrap">
-            <span>© {currentYear} Kalyan Sadhukhan.</span>
+            <span>© {currentYear} Kalyan Sadhukhan</span>
           </p>
           <button
             onClick={scrollToTop}
