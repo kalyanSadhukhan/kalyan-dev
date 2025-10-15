@@ -1,4 +1,4 @@
-import { Github, Linkedin, Instagram, Heart } from "lucide-react";
+import { Github, Linkedin, Instagram, Mail, Phone } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 
 export const Footer = () => {
@@ -95,15 +95,25 @@ export const Footer = () => {
           {/* Contact info */}
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-lg">Get in Touch</h4>
-            <div className="space-y-2 text-muted-foreground">
-              <p className="text-sm">
+            <div className="space-y-3 text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary flex-shrink-0" />
                 <a
                   href="mailto:sadhukhankalyan21@gmail.com"
-                  className="hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
+                  className="text-sm hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
                 >
                   sadhukhankalyan21@gmail.com
                 </a>
-              </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-primary flex-shrink-0" />
+                <a
+                  href="tel:+918017771992"
+                  className="text-sm hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
+                >
+                  +91 8017771992
+                </a>
+              </div>
             </div>
           </div>
         </div>
