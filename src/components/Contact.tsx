@@ -5,22 +5,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Send, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
-
-const contactFormSchema = z.object({
-  name: z.string()
-    .trim()
-    .min(1, "Name is required")
-    .max(100, "Name must be less than 100 characters"),
-  email: z.string()
-    .trim()
-    .email("Invalid email address")
-    .max(255, "Email must be less than 255 characters"),
-  message: z.string()
-    .trim()
-    .min(10, "Message must be at least 10 characters")
-    .max(2000, "Message must be less than 2000 characters")
-});
 
 export const Contact = () => {
   const { toast } = useToast();
@@ -31,64 +15,42 @@ export const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     setIsSubmitting(true);
 
     try {
-      // Validate form data with Zod
-      const validatedData = contactFormSchema.parse(formData);
+      const formElement = e.currentTarget;
+      const formDataToSend = new FormData(formElement);
       
-      // Call n8n webhook
-      const response = await fetch(
-        "https://kalyansadhukhan.app.n8n.cloud/webhook/bba3680a-24ec-4bd2-aab5-3ff54a2713ea",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...validatedData,
-            timestamp: new Date().toISOString(),
-            source: window.location.origin,
-          }),
+      const response = await fetch("https://formspree.io/f/mwpraoyb", {
+        method: "POST",
+        body: formDataToSend,
+        headers: {
+          'Accept': 'application/json'
         }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Webhook returned status ${response.status}`);
-      }
-
-      console.log("Form submitted successfully to n8n webhook");
-      
-      toast({
-        title: "Message Sent!",
-        description: "Thank you for reaching out. I'll get back to you soon!",
       });
-      
-      // Reset form
-      setFormData({ name: "", email: "", message: "" });
+
+      if (response.ok) {
+        toast({
+          title: "✅ Message sent successfully!",
+          description: "Thank you for reaching out. I'll get back to you soon!",
+        });
+        
+        // Reset form
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        throw new Error("Form submission failed");
+      }
       
     } catch (error) {
       console.error("Form submission error:", error);
-      
-      if (error instanceof z.ZodError) {
-        // Handle validation errors
-        const firstError = error.errors[0];
-        toast({
-          title: "Validation Error",
-          description: firstError.message,
-          variant: "destructive",
-        });
-      } else {
-        // Handle network/webhook errors
-        toast({
-          title: "Error",
-          description: "Failed to send message. Please try again or use the email link below.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "❌ Failed to send message",
+        description: "Please try again or use the email link below.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
