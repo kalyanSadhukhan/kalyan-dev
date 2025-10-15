@@ -42,7 +42,7 @@ export const Contact = () => {
       
       // Call n8n webhook
       const response = await fetch(
-        "https://kalyansadhukhan.app.n8n.cloud/webhook-test/bba3680a-24ec-4bd2-aab5-3ff54a2713ea",
+        "https://kalyansadhukhan.app.n8n.cloud/webhook/bba3680a-24ec-4bd2-aab5-3ff54a2713ea",
         {
           method: "POST",
           headers: {
