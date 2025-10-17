@@ -20,7 +20,9 @@ export const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/send-email", {
+      // Support local dev where the API is served by `vercel dev` on 3000
+      const apiBase = (import.meta as any).env?.VITE_API_BASE || "";
+      const response = await fetch(`${apiBase}/api/send-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
