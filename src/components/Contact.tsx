@@ -26,18 +26,22 @@ export const Contact = () => {
         body: JSON.stringify(formData),
       });
 
-      let data;
+      // Robustly parse JSON; handle empty/invalid bodies gracefully
+      let data: any = null;
       try {
-        data = await response.json();
-      } catch (err) {
-        data = { success: false, error: "Invalid server response" };
+        // Response might be empty or invalid JSON
+        const text = await response.text();
+        data = text ? JSON.parse(text) : null;
+      } catch (_) {
+        data = null;
       }
 
-      if (response.ok && data.success) {
+      if (response.ok && data?.success) {
         toast({ title: "✅ Message sent successfully!", description: "I'll get back to you soon!" });
         setFormData({ name: "", email: "", message: "" });
       } else {
-        throw new Error(data.error || "Failed to send message");
+        const serverError = data?.error || (data && typeof data === "string" ? data : null);
+        throw new Error(serverError || `Failed to send message (${response.status})`);
       }
     } catch (error) {
       console.error("Contact form error:", error);
