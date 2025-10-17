@@ -15,35 +15,32 @@ export const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
     setIsSubmitting(true);
 
     try {
-      const formElement = e.currentTarget;
-      const formDataToSend = new FormData(formElement);
-      
-      const response = await fetch("https://formspree.io/f/mwpraoyb", {
+      const response = await fetch("/api/send-email", {
         method: "POST",
-        body: formDataToSend,
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      const data: { success?: boolean; error?: string } = await response.json();
+
+      if (response.ok && data.success) {
         toast({
           title: "✅ Message sent successfully!",
           description: "Thank you for reaching out. I'll get back to you soon!",
         });
-        
-        // Reset form
         setFormData({ name: "", email: "", message: "" });
       } else {
-        throw new Error("Form submission failed");
+        throw new Error(data.error || "Failed to send message");
       }
-      
     } catch (error) {
       console.error("Form submission error:", error);
       toast({
@@ -56,20 +53,11 @@ export const Contact = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
   return (
     <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-transparent" />
-
       <div className="container mx-auto relative z-10">
-        {/* Section header */}
+        {/* Section Header */}
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl sm:text-5xl font-heading font-bold mb-4">
             Get In <span className="gradient-text">Touch</span>
@@ -85,7 +73,6 @@ export const Contact = () => {
           <div className="space-y-6 animate-fade-in-left">
             <div className="glass-card p-8 rounded-2xl">
               <h3 className="text-2xl font-heading font-bold mb-6">Contact Information</h3>
-              
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -121,17 +108,10 @@ export const Contact = () => {
 
             {/* Quick mailto fallback */}
             <div className="glass-card p-6 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
-              <p className="text-sm text-foreground/80 mb-3">
-                Prefer to email directly?
-              </p>
-              <Button
-                variant="outline"
-                className="w-full border-primary/30 hover:bg-primary/10"
-                asChild
-              >
+              <p className="text-sm text-foreground/80 mb-3">Prefer to email directly?</p>
+              <Button variant="outline" className="w-full border-primary/30 hover:bg-primary/10" asChild>
                 <a href="mailto:sadhukhankalyan21@gmail.com?subject=Portfolio Contact">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Open Email Client
+                  <Mail className="mr-2 h-4 w-4" /> Open Email Client
                 </a>
               </Button>
             </div>
@@ -187,14 +167,7 @@ export const Contact = () => {
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all duration-300 hover:scale-105"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? (
-                  <>Sending...</>
-                ) : (
-                  <>
-                    <Send className="mr-2 h-5 w-5" />
-                    Send Message
-                  </>
-                )}
+                {isSubmitting ? "Sending..." : <><Send className="mr-2 h-5 w-5" /> Send Message</>}
               </Button>
             </form>
           </div>
