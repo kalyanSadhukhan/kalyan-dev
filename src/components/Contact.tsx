@@ -23,33 +23,88 @@ export const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Add client-side logging
+    console.log('=== Form Submission Started ===');
+    console.log('Form data:', formData);
+    console.log('Submitting to:', '/api/send-email');
+
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify(formData),
       });
 
-      const data: { success?: boolean; error?: string } = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+      const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok && data.success) {
+        console.log('Email sent successfully');
         toast({
           title: "✅ Message sent successfully!",
           description: "Thank you for reaching out. I'll get back to you soon!",
         });
         setFormData({ name: "", email: "", message: "" });
       } else {
-        throw new Error(data.error || "Failed to send message");
+        // Handle API errors with detailed messages
+        const errorMessage = data.error || "Failed to send message";
+        const errorDetails = data.details ? `\n\nDetails: ${JSON.stringify(data.details, null, 2)}` : '';
+        
+        console.error('API Error:', {
+          status: response.status,
+          error: errorMessage,
+          details: data.details
+        });
+        
+        throw new Error(`${errorMessage}${errorDetails}`);
       }
     } catch (error) {
-      console.error("Form submission error:", error);
+      console.error("=== Form Submission Error ===");
+      console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
+      console.error("Error message:", error instanceof Error ? error.message : String(error));
+      console.error("Full error:", error);
+      console.error("=== End Form Submission Error ===");
+      
+      // Extract meaningful error message
+      let errorMessage = "Please try again or use the email link below.";
+      let errorTitle = "❌ Failed to send message";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("Missing required fields")) {
+          errorTitle = "❌ Missing Information";
+          errorMessage = "Please fill in all required fields.";
+        } else if (error.message.includes("Invalid email format")) {
+          errorTitle = "❌ Invalid Email";
+          errorMessage = "Please enter a valid email address.";
+        } else if (error.message.includes("email service not configured")) {
+          errorTitle = "❌ Service Unavailable";
+          errorMessage = "Email service is temporarily unavailable. Please use the email link below.";
+        } else if (error.message.includes("Failed to send email")) {
+          errorTitle = "❌ Send Failed";
+          errorMessage = "Unable to send email. Please try again or use the email link below.";
+        } else if (error.message.includes("NetworkError") || error.message.includes("fetch")) {
+          errorTitle = "❌ Connection Error";
+          errorMessage = "Unable to connect to the server. Please check your internet connection.";
+        } else {
+          // Show the actual error message from the API
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
-        title: "❌ Failed to send message",
-        description: "Please try again or use the email link below.",
+        title: errorTitle,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
+      console.log('=== Form Submission Completed ===');
     }
   };
 
