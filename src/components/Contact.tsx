@@ -17,33 +17,31 @@ export const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     setIsSubmitting(true);
 
     try {
-      const formElement = e.currentTarget;
-      const formDataToSend = new FormData(formElement);
-      
-      const response = await fetch("https://formspree.io/f/mwpraoyb", {
+      const response = await fetch("/api/send-email", {
         method: "POST",
-        body: formDataToSend,
         headers: {
-          'Accept': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      const data = (await response.json()) as { success?: boolean; error?: string };
+
+      if (response.ok && data?.success) {
         toast({
           title: "✅ Message sent successfully!",
           description: "Thank you for reaching out. I'll get back to you soon!",
         });
-        
-        // Reset form
+
         setFormData({ name: "", email: "", message: "" });
       } else {
-        throw new Error("Form submission failed");
+        const message = data?.error ?? "Failed to send message";
+        throw new Error(message);
       }
-      
     } catch (error) {
       console.error("Form submission error:", error);
       toast({
