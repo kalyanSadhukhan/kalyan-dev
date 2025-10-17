@@ -6,17 +6,25 @@ import { Label } from "@/components/ui/label";
 import { Mail, Send, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
 export const Contact = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,11 +34,11 @@ export const Contact = () => {
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data: { success?: boolean; error?: string } = await response.json();
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
@@ -41,11 +49,11 @@ export const Contact = () => {
       } else {
         throw new Error(data.error || "Failed to send message");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Form submission error:", error);
       toast({
         title: "❌ Failed to send message",
-        description: "Please try again or use the email link below.",
+        description: error.message || "Please try again or use the email link below.",
         variant: "destructive",
       });
     } finally {
