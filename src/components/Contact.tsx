@@ -26,22 +26,24 @@ export const Contact = () => {
         body: JSON.stringify(formData),
       });
 
-      let data;
+      // Robust JSON parsing
+      let data: any = null;
       try {
-        data = await response.json();
-      } catch (err) {
-        data = { success: false, error: "Invalid server response" };
+        const text = await response.text();
+        data = text ? JSON.parse(text) : null;
+      } catch (_) {
+        data = null;
       }
 
-      if (response.ok && data.success) {
+      if (response.ok && data?.success) {
         toast({ title: "✅ Message sent successfully!", description: "I'll get back to you soon!" });
         setFormData({ name: "", email: "", message: "" });
       } else {
-        throw new Error(data.error || "Failed to send message");
+        const serverError = data?.error || (data && typeof data === "string" ? data : null);
+        throw new Error(serverError || `Failed to send message (${response.status})`);
       }
     } catch (error) {
       console.error("Contact form error:", error);
-
       toast({
         title: "❌ Failed to send message",
         description: error instanceof Error ? error.message : String(error),
@@ -67,6 +69,7 @@ export const Contact = () => {
         </div>
 
         <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-8">
+          {/* Contact Info */}
           <div className="space-y-6 animate-fade-in-left">
             <div className="glass-card p-8 rounded-2xl">
               <h3 className="text-2xl font-heading font-bold mb-6">Contact Information</h3>
@@ -85,7 +88,6 @@ export const Contact = () => {
                     </a>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Phone className="h-6 w-6 text-primary" />
@@ -113,6 +115,7 @@ export const Contact = () => {
             </div>
           </div>
 
+          {/* Contact Form */}
           <div className="animate-fade-in-right">
             <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl space-y-6">
               <div className="space-y-2">
@@ -128,7 +131,6 @@ export const Contact = () => {
                   required
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -142,7 +144,6 @@ export const Contact = () => {
                   required
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="message">Message</Label>
                 <Textarea
@@ -155,7 +156,6 @@ export const Contact = () => {
                   required
                 />
               </div>
-
               <Button
                 type="submit"
                 size="lg"
