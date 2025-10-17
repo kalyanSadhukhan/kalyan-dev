@@ -1,34 +1,25 @@
-import { Resend } from 'resend';
+// api/sendEmail.js
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { name, email, message } = req.body;
 
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: 'Missing fields' });
-  }
-
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    await resend.emails.send({
-      from: 'Portfolio Contact <onboarding@resend.dev>', // sender name
-      to: 'sadhukhankalyan21@gmail.com',
-      subject: `New Message from ${name}`,
-      html: `
-        <h3>New Message from Portfolio</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong><br>${message}</p>
-      `,
+    const data = await resend.emails.send({
+      from: "Portfolio Contact <onboarding@resend.dev>",
+      to: "sadhukhankalyan21@gmail.com",
+      subject: `New message from ${name}`,
+      text: `Email: ${email}\n\nMessage:\n${message}`,
     });
 
-    res.status(200).json({ message: 'Email sent successfully!' });
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to send email', error });
+    return res.status(500).json({ error: error.message });
   }
 }
