@@ -17,33 +17,36 @@ export const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     setIsSubmitting(true);
 
     try {
-      const formElement = e.currentTarget;
-      const formDataToSend = new FormData(formElement);
-      
-      const response = await fetch("https://formspree.io/f/mwpraoyb", {
+      type ContactPayload = { name: string; email: string; message: string };
+      type ApiResponse = { success: boolean; error?: string };
+
+      const payload: ContactPayload = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        message: formData.message.trim(),
+      };
+
+      const response = await fetch("/api/send-email", {
         method: "POST",
-        body: formDataToSend,
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        toast({
-          title: "✅ Message sent successfully!",
-          description: "Thank you for reaching out. I'll get back to you soon!",
-        });
-        
-        // Reset form
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        throw new Error("Form submission failed");
+      const data = (await response.json()) as ApiResponse;
+
+      if (!response.ok || !data.success) {
+        throw new Error(data?.error || "Failed to send message");
       }
-      
+
+      toast({
+        title: "✅ Message sent successfully!",
+        description: "Thank you for reaching out. I'll get back to you soon!",
+      });
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       console.error("Form submission error:", error);
       toast({
