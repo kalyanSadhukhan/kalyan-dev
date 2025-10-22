@@ -227,7 +227,7 @@ const Contact = () => {
                   required
                   maxLength={2000}
                   rows={6}
-                  placeholder="Tell me about your project or just say hi!"
+                  placeholder="Let's collaborate — share your thoughts here!"
                   className={`w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 focus:outline-none transition-colors resize-none ${
                     validationErrors.message ? 'border-red-400 focus:border-red-400' : 'border-gray-700 focus:border-blue-400'
                   }`}
