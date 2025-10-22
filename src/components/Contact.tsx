@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import emailjs from 'emailjs-com';
+import { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +9,11 @@ const ContactForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init('wuUEv4cGU7SKdcbJL');
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -31,8 +36,7 @@ const ContactForm = () => {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message,
-        },
-        'wuUEv4cGU7SKdcbJL'      // Your Public Key
+        }
       );
 
       console.log('Email sent successfully:', result);
