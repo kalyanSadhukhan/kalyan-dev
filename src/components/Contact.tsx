@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
+import { Mail, Phone, Send } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -55,108 +56,148 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold mb-3">Get In Touch</h2>
-          <p className="text-gray-600 text-lg">
-            Have a question or want to work together? Send me a message!
+    <section className="py-20 px-4 bg-black text-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold mb-4">
+            Get In <span className="text-blue-400">Touch</span>
+          </h2>
+          <div className="w-24 h-1 bg-blue-400 mx-auto mb-6"></div>
+          <p className="text-gray-400 text-lg">
+            Have a question or want to work together? Feel free to reach out!
           </p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow-lg">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-700">
-              Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Your name"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-            />
-          </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
-              Email *
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="your.email@example.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-            />
-          </div>
+        {/* Two Column Layout */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Left Column - Contact Information */}
+          <div className="space-y-8">
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+              
+              <div className="space-y-6">
+                {/* Email */}
+                <div className="flex items-start gap-4">
+                  <div className="bg-blue-500/20 p-3 rounded-xl">
+                    <Mail className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold mb-1">Email</p>
+                    <p className="text-gray-400">sadhukhankalyan21@gmail.com</p>
+                  </div>
+                </div>
 
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-700">
-              Message *
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              required
-              rows={6}
-              placeholder="Your message here..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Sending...
-              </>
-            ) : (
-              'Send Message'
-            )}
-          </button>
-
-          {status === 'success' && (
-            <div className="p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-start gap-3">
-              <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <div>
-                <p className="font-medium">Message sent successfully!</p>
-                <p className="text-sm">I'll get back to you as soon as possible.</p>
+                {/* Phone */}
+                <div className="flex items-start gap-4">
+                  <div className="bg-blue-500/20 p-3 rounded-xl">
+                    <Phone className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold mb-1">Phone</p>
+                    <p className="text-gray-400">+91 8017771992</p>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
 
-          {status === 'error' && (
-            <div className="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg flex items-start gap-3">
-              <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <div>
-                <p className="font-medium">Failed to send message</p>
-                <p className="text-sm">Please try again or email me directly.</p>
-              </div>
+            {/* Open Email Client Button */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-8">
+              <p className="text-gray-300 mb-4">Prefer to email directly?</p>
+              <a
+                href="mailto:sadhukhankalyan21@gmail.com"
+                className="flex items-center justify-center gap-3 w-full py-3 px-6 bg-transparent border border-gray-700 hover:border-blue-400 text-white rounded-xl transition-all duration-300"
+              >
+                <Mail className="w-5 h-5" />
+                Open Email Client
+              </a>
             </div>
-          )}
-        </form>
+          </div>
+
+          {/* Right Column - Contact Form */}
+          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Your name"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition-colors"
+                />
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="your.email@example.com"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition-colors"
+                />
+              </div>
+
+              {/* Message Field */}
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium mb-2">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows={6}
+                  placeholder="Tell me about your project or just say hi!"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition-colors resize-none"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 px-6 bg-blue-400 hover:bg-blue-500 text-black font-medium rounded-xl transition-colors duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Send className="w-5 h-5" />
+                {loading ? 'Sending...' : 'Send Message'}
+              </button>
+
+              {/* Success Message */}
+              {status === 'success' && (
+                <div className="p-4 bg-green-500/20 border border-green-500/50 text-green-400 rounded-xl">
+                  <p className="font-medium">Message sent successfully!</p>
+                  <p className="text-sm">I'll get back to you as soon as possible.</p>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {status === 'error' && (
+                <div className="p-4 bg-red-500/20 border border-red-500/50 text-red-400 rounded-xl">
+                  <p className="font-medium">Failed to send message</p>
+                  <p className="text-sm">Please try again or email me directly.</p>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
