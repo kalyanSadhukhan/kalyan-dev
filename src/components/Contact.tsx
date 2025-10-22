@@ -1,6 +1,24 @@
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import { Mail, Phone, Send, CheckCircle2, XCircle } from 'lucide-react';
+import { z } from 'zod';
+
+// Validation schema for contact form
+const contactSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+  email: z.string()
+    .trim()
+    .email("Please enter a valid email address")
+    .max(255, "Email must be less than 255 characters"),
+  message: z.string()
+    .trim()
+    .min(10, "Message must be at least 10 characters")
+    .max(2000, "Message must be less than 2000 characters")
+});
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +28,13 @@ const Contact = () => {
   });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
 
   // Initialize EmailJS
+  // SECURITY NOTE: EmailJS keys are exposed in client code by design.
+  // To mitigate abuse, configure domain restrictions in your EmailJS dashboard:
+  // https://dashboard.emailjs.com/admin/account
   useEffect(() => {
     emailjs.init('wuUEv4cGU7SKdcbJL');
   }, []);
@@ -22,33 +45,61 @@ const Contact = () => {
       ...prev,
       [name]: value
     }));
+    // Clear validation error for this field when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => {
+        const updated = { ...prev };
+        delete updated[name];
+        return updated;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    setValidationErrors({});
     setStatus('idle');
 
+    // Client-side rate limiting: prevent submissions within 5 seconds
+    const now = Date.now();
+    if (now - lastSubmitTime < 5000) {
+      setValidationErrors({ submit: 'Please wait a few seconds before submitting again' });
+      return;
+    }
+
+    // Validate form data
+    const validation = contactSchema.safeParse(formData);
+    if (!validation.success) {
+      const errors: Record<string, string> = {};
+      validation.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const result = await emailjs.send(
+      await emailjs.send(
         'service_0nw6n8n',
         'template_76ibe46',
         {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
+          from_name: validation.data.name,
+          from_email: validation.data.email,
+          message: validation.data.message,
         }
       );
 
-      console.log('Email sent successfully:', result);
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
+      setLastSubmitTime(now);
       
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
-      console.error('Error sending email:', error);
       setStatus('error');
-      
       setTimeout(() => setStatus('idle'), 5000);
     } finally {
       setLoading(false);
@@ -129,9 +180,15 @@ const Contact = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  maxLength={100}
                   placeholder="Your name"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition-colors"
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 focus:outline-none transition-colors ${
+                    validationErrors.name ? 'border-red-400 focus:border-red-400' : 'border-gray-700 focus:border-blue-400'
+                  }`}
                 />
+                {validationErrors.name && (
+                  <p className="mt-1 text-sm text-red-400">{validationErrors.name}</p>
+                )}
               </div>
 
               {/* Email Field */}
@@ -146,9 +203,15 @@ const Contact = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  maxLength={255}
                   placeholder="your.email@example.com"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition-colors"
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 focus:outline-none transition-colors ${
+                    validationErrors.email ? 'border-red-400 focus:border-red-400' : 'border-gray-700 focus:border-blue-400'
+                  }`}
                 />
+                {validationErrors.email && (
+                  <p className="mt-1 text-sm text-red-400">{validationErrors.email}</p>
+                )}
               </div>
 
               {/* Message Field */}
@@ -162,10 +225,16 @@ const Contact = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  maxLength={2000}
                   rows={6}
                   placeholder="Tell me about your project or just say hi!"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition-colors resize-none"
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 focus:outline-none transition-colors resize-none ${
+                    validationErrors.message ? 'border-red-400 focus:border-red-400' : 'border-gray-700 focus:border-blue-400'
+                  }`}
                 />
+                {validationErrors.message && (
+                  <p className="mt-1 text-sm text-red-400">{validationErrors.message}</p>
+                )}
               </div>
 
               {/* Submit Button */}
@@ -178,7 +247,10 @@ const Contact = () => {
                 {loading ? 'Sending...' : 'Send Message'}
               </button>
 
-
+              {/* General Error Message */}
+              {validationErrors.submit && (
+                <p className="text-sm text-red-400 text-center">{validationErrors.submit}</p>
+              )}
             </form>
           </div>
         </div>
