@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
-import { Mail, Phone, Send } from 'lucide-react';
+import { Mail, Phone, Send, CheckCircle2, XCircle } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -178,25 +178,62 @@ const Contact = () => {
                 {loading ? 'Sending...' : 'Send Message'}
               </button>
 
-              {/* Success Message */}
-              {status === 'success' && (
-                <div className="p-4 bg-green-500/20 border border-green-500/50 text-green-400 rounded-xl">
-                  <p className="font-medium">Message sent successfully!</p>
-                  <p className="text-sm">I'll get back to you as soon as possible.</p>
-                </div>
-              )}
 
-              {/* Error Message */}
-              {status === 'error' && (
-                <div className="p-4 bg-red-500/20 border border-red-500/50 text-red-400 rounded-xl">
-                  <p className="font-medium">Failed to send message</p>
-                  <p className="text-sm">Please try again or email me directly.</p>
-                </div>
-              )}
             </form>
           </div>
         </div>
       </div>
+
+      {/* Toast Notification - Bottom Right Corner */}
+      {status === 'success' && (
+        <div className="fixed bottom-8 right-8 z-50 animate-slide-in-up">
+          <div className="bg-gray-900 border border-blue-400 rounded-xl shadow-2xl p-4 min-w-[320px] backdrop-blur-sm">
+            <div className="flex items-start gap-3">
+              <div className="bg-blue-400/20 p-2 rounded-lg">
+                <CheckCircle2 className="w-6 h-6 text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-white mb-1">Message Sent Successfully!</p>
+                <p className="text-sm text-gray-400">I'll get back to you as soon as possible.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className="fixed bottom-8 right-8 z-50 animate-slide-in-up">
+          <div className="bg-gray-900 border border-red-400 rounded-xl shadow-2xl p-4 min-w-[320px] backdrop-blur-sm">
+            <div className="flex items-start gap-3">
+              <div className="bg-red-400/20 p-2 rounded-lg">
+                <XCircle className="w-6 h-6 text-red-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-white mb-1">Failed to Send Message</p>
+                <p className="text-sm text-gray-400">Please try again or email me directly.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSS Animation */}
+      <style>{`
+        @keyframes slide-in-up {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        .animate-slide-in-up {
+          animation: slide-in-up 0.4s ease-out;
+        }
+      `}</style>
     </section>
   );
 };
