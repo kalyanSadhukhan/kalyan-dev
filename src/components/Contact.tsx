@@ -1,177 +1,157 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Mail, Send, Phone } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
-export const Contact = () => {
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setLoading(true);
+    setStatus('idle');
 
     try {
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      // EmailJS configuration with your credentials
+      const result = await emailjs.send(
+        'service_0nw6n8n',        // Your Service ID
+        'template_76ibe46',       // Your Template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        },
+        'wuUEv4cGU7SKdcbJL'      // Your Public Key
+      );
 
-      // Robustly parse JSON; handle empty/invalid bodies gracefully
-      let data: any = null;
-      try {
-        // Response might be empty or invalid JSON
-        const text = await response.text();
-        data = text ? JSON.parse(text) : null;
-      } catch (_) {
-        data = null;
-      }
-
-      if (response.ok && data?.success) {
-        toast({ title: "✅ Message sent successfully!", description: "I'll get back to you soon!" });
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        const serverError = data?.error || (data && typeof data === "string" ? data : null);
-        throw new Error(serverError || `Failed to send message (${response.status})`);
-      }
+      console.log('Email sent successfully:', result);
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
-      console.error("Contact form error:", error);
-
-      toast({
-        title: "❌ Failed to send message",
-        description: error instanceof Error ? error.message : String(error),
-        variant: "destructive",
-      });
+      console.error('Error sending email:', error);
+      setStatus('error');
+      
+      // Reset error message after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-transparent" />
-      <div className="container mx-auto relative z-10">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl sm:text-5xl font-heading font-bold mb-4">
-            Get In <span className="gradient-text">Touch</span>
-          </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mb-4" />
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Have a question or want to work together? Feel free to reach out!
-          </p>
+    <div className="w-full max-w-2xl mx-auto p-6">
+      <h2 className="text-3xl font-bold mb-2">Get In Touch</h2>
+      <p className="text-gray-600 mb-6">
+        Have a question or want to work together? Send me a message!
+      </p>
+      
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-700">
+            Name *
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            placeholder="Your name"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+          />
         </div>
 
-        <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-8">
-          <div className="space-y-6 animate-fade-in-left">
-            <div className="glass-card p-8 rounded-2xl">
-              <h3 className="text-2xl font-heading font-bold mb-6">Contact Information</h3>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mail className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">Email</h4>
-                    <a
-                      href="mailto:sadhukhankalyan21@gmail.com"
-                      className="text-muted-foreground hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
-                    >
-                      sadhukhankalyan21@gmail.com
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">Phone</h4>
-                    <a
-                      href="tel:+918017771992"
-                      className="text-muted-foreground hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
-                    >
-                      +91 8017771992
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="glass-card p-6 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
-              <p className="text-sm text-foreground/80 mb-3">Prefer to email directly?</p>
-              <Button variant="outline" className="w-full border-primary/30 hover:bg-primary/10" asChild>
-                <a href="mailto:sadhukhankalyan21@gmail.com?subject=Portfolio Contact">
-                  <Mail className="mr-2 h-4 w-4" /> Open Email Client
-                </a>
-              </Button>
-            </div>
-          </div>
-
-          <div className="animate-fade-in-right">
-            <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="bg-muted/50 border-border focus:border-primary transition-colors"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="bg-muted/50 border-border focus:border-primary transition-colors"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  placeholder="Tell me about your project or just say hi!"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="bg-muted/50 border-border focus:border-primary transition-colors min-h-[150px] resize-none"
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground glow-primary transition-all duration-300 hover:scale-105"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Sending..." : <><Send className="mr-2 h-5 w-5" /> Send Message</>}
-              </Button>
-            </form>
-          </div>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
+            Email *
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="your.email@example.com"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+          />
         </div>
-      </div>
-    </section>
+
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-700">
+            Message *
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
+            required
+            rows={6}
+            placeholder="Your message here..."
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Sending...
+            </>
+          ) : (
+            'Send Message'
+          )}
+        </button>
+
+        {status === 'success' && (
+          <div className="p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <p className="font-medium">Message sent successfully!</p>
+              <p className="text-sm">I'll get back to you as soon as possible.</p>
+            </div>
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <p className="font-medium">Failed to send message</p>
+              <p className="text-sm">Please try again or email me directly.</p>
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
+
+export default ContactForm;
