@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import emailjs from '@emailjs/browser';
+import emailjs from 'emailjs-com';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
