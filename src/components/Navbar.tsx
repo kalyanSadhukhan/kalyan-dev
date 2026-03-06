@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { name: "Home", href: "#home" },
@@ -14,11 +16,13 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-      
+
       // Update active section based on scroll position
       const sections = navItems.map(item => item.href.substring(1));
       for (const section of sections) {
@@ -47,9 +51,8 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-card shadow-lg" : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-card shadow-lg" : "bg-transparent"
+        }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -75,15 +78,24 @@ export const Navbar = () => {
                   e.preventDefault();
                   scrollToSection(item.href);
                 }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary ${
-                  activeSection === item.href.substring(1)
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary ${activeSection === item.href.substring(1)
                     ? "bg-primary/10 text-primary"
                     : "text-foreground/80 hover:text-primary hover:bg-primary/5"
-                }`}
+                  }`}
               >
                 {item.name}
               </a>
             ))}
+            {isAuthenticated && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/admin')}
+                className="ml-2 px-4 py-2 hover:bg-primary/10 text-primary hover:text-primary transition-colors gap-2"
+              >
+                <ShieldAlert className="w-4 h-4" />
+                Admin
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -110,15 +122,27 @@ export const Navbar = () => {
                     e.preventDefault();
                     scrollToSection(item.href);
                   }}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary ${
-                    activeSection === item.href.substring(1)
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary ${activeSection === item.href.substring(1)
                       ? "bg-primary/10 text-primary"
                       : "text-foreground/80 hover:text-primary hover:bg-primary/5"
-                  }`}
+                    }`}
                 >
                   {item.name}
                 </a>
               ))}
+              {isAuthenticated && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate('/admin');
+                  }}
+                  className="w-full justify-start px-4 py-3 text-primary hover:bg-primary/10 transition-colors gap-2"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  Admin Portal
+                </Button>
+              )}
             </div>
           </div>
         )}

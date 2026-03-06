@@ -1,8 +1,58 @@
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Code, Wrench, BookOpen, Lightbulb } from "lucide-react";
+import { Code, Wrench, BookOpen, Loader2 } from "lucide-react";
+import { api } from "@/lib/api";
 
 export const Skills = () => {
-  const skillCategories = [
+  const [dynamicSkills, setDynamicSkills] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const data = await api.get('/api/skills');
+        if (Array.isArray(data)) {
+          // Sort skills by displayOrder before grouping
+          const sortedData = data.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+          setDynamicSkills(sortedData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch skills data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSkills();
+  }, []);
+  const defaultCategories = [
+    {
+      icon: Code,
+      title: "Programming Languages",
+      skills: [],
+      color: "primary",
+    },
+    {
+      icon: Wrench,
+      title: "Tools & Platforms",
+      skills: [],
+      color: "accent",
+    },
+    {
+      icon: BookOpen,
+      title: "Core Concepts",
+      skills: [],
+      color: "primary",
+    },
+  ];
+
+  // Map dynamic skills into categories
+  const mappedCategories = defaultCategories.map(cat => ({
+    ...cat,
+    skills: dynamicSkills.filter(skill => skill.category === cat.title)
+  }));
+
+  // Fallback if no dynamic skills
+  const skillCategories = dynamicSkills.length > 0 ? mappedCategories : [
     {
       icon: Code,
       title: "Programming Languages",
@@ -85,82 +135,49 @@ export const Skills = () => {
         </div>
 
         {/* Skills grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {skillCategories.map((category, index) => (
-            <div
-              key={category.title}
-              className="glass-card p-6 rounded-xl hover:scale-105 transition-all duration-300 animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-10 h-10 bg-${category.color}/10 rounded-lg flex items-center justify-center`}>
-                  <category.icon className={`h-5 w-5 text-${category.color}`} />
-                </div>
-                <h3 className="font-heading font-semibold text-lg">{category.title}</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <a
-                    key={skill.name}
-                    href={skill.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block"
-                  >
-                    <Badge
-                      variant="secondary"
-                      className="bg-muted/50 hover:bg-primary/10 hover:text-primary hover:scale-105 transition-all duration-300 cursor-pointer"
-                    >
-                      {skill.name}
-                    </Badge>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Highlighted Project */}
-        <div className="max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: "0.3s" }}>
-          <div className="glass-card p-8 rounded-2xl border-2 border-primary/20 hover:border-primary/40 transition-colors duration-300">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Lightbulb className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-heading font-bold text-2xl">{highlightedProject.title}</h3>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {highlightedProject.tech.map((tech) => (
-                    <Badge key={tech} variant="outline" className="border-primary/30 text-primary">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-            
-            <ul className="space-y-3 mb-6">
-              {highlightedProject.points.map((point, i) => (
-                <li key={i} className="flex items-start gap-3 text-foreground/80">
-                  <span className="text-primary mt-1">▹</span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-
-            <a
-              href={highlightedProject.githubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-primary hover:text-accent transition-colors duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-primary rounded-md px-2"
-            >
-              View on GitHub
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {skillCategories.map((category, index) => (
+              category.skills.length > 0 && (
+                <div
+                  key={category.title}
+                  className="glass-card p-6 rounded-xl hover:scale-105 transition-all duration-300 animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-10 h-10 bg-${category.color}/10 rounded-lg flex items-center justify-center`}>
+                      <category.icon className={`h-5 w-5 text-${category.color}`} />
+                    </div>
+                    <h3 className="font-heading font-semibold text-lg">{category.title}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill: any) => (
+                      <a
+                        key={skill.name}
+                        href={skill.url || '#'}
+                        target={skill.url ? "_blank" : "_self"}
+                        rel="noopener noreferrer"
+                        className="inline-block"
+                      >
+                        <Badge
+                          variant="secondary"
+                          className="bg-muted/50 hover:bg-primary/10 hover:text-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                        >
+                          {skill.name}
+                        </Badge>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )
+            ))}
+          </div>
+        )}
+
       </div>
     </section>
   );
